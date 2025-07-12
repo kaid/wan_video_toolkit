@@ -1,0 +1,14 @@
+# Include important files in the package distribution
+include README.md
+include LICENSE
+include pyproject.toml
+include requirements.txt
+
+# Include all Python files
+recursive-include wan_video_toolkit *.py
+
+# Exclude development and cache files
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+exclude .gitignore
+exclude .git*
