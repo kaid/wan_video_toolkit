@@ -19,12 +19,10 @@ from ..core.generation_manager import GenerationManager
 from ..adapters.lora_adapter import LoRAManager, LoRAAdapter
 from ..types import (
     ModelConfig,
-    GenerationParams,
     VideoPath,
     ImageInput,
     DeviceType,
     ModelType,
-    DeviceStrategy,
     LoRAConfig,
     ValidationError,
     GenerationError,
@@ -340,8 +338,8 @@ class WanFLF2VModel:
             min_frames=8,
             max_frames=81,
             fps=24,
-            use_fast=True,
             default_loras=[],
+            use_fast=True
         )
 
     def __del__(self) -> None:
