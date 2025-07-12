@@ -61,7 +61,6 @@ class ModelConfig(TypedDict):
     model_id: str
     model_type: ModelType
     dtype: str  # "float16", "bfloat16", etc.
-    device_strategy: DeviceStrategy
     max_area: int
     default_height: int
     default_width: int

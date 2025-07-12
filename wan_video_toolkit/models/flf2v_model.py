@@ -79,9 +79,6 @@ class WanFLF2VModel:
 
         # Load default LoRAs if specified
         self._load_default_loras()
-        
-        # Load pipeline immediately at module level (ZeroGPU compatible)
-        self.load()
 
     def load(self, force_reload: bool = False) -> None:
         """
@@ -298,18 +295,9 @@ class WanFLF2VModel:
                 "torch_dtype": getattr(torch, self.config["dtype"]),
             }
 
-            # Add device mapping if specified
-            if self.config["device_strategy"] == DeviceStrategy.BALANCED:
-                pipeline_kwargs["device_map"] = "balanced"
-                pipeline_kwargs["use_fast"] = self.config.get("use_fast", True)
-
             pipeline = WanImageToVideoPipeline.from_pretrained(
                 self.config["model_id"], **pipeline_kwargs
-            )
-
-            # Move to device if not using balanced mapping
-            if self.config["device_strategy"] != DeviceStrategy.BALANCED:
-                pipeline = pipeline.to(self.device)
+            ).to(self.device)
 
             # Apply loaded LoRAs
             for adapter_name, adapter in self.lora_manager.adapters.items():
@@ -317,7 +305,6 @@ class WanFLF2VModel:
                     adapter.apply_to_pipeline(pipeline)
 
             return pipeline
-            
         except Exception as e:
             raise GenerationError(f"Failed to create FLF2V pipeline: {e}") from e
 
@@ -337,7 +324,6 @@ class WanFLF2VModel:
             "model_id": self.config["model_id"],
             "model_type": self.config["model_type"].value,
             "dtype": self.config["dtype"],
-            "device_strategy": self.config["device_strategy"].value,
             "active_loras": self.lora_manager.get_active_adapters(),
         }
 
@@ -348,7 +334,6 @@ class WanFLF2VModel:
             model_id="Wan-AI/Wan2.1-FLF2V-14B-720P-diffusers",
             model_type=ModelType.FLF2V,
             dtype="float16",
-            device_strategy=DeviceStrategy.BALANCED,
             max_area=1280 * 720,
             default_height=720,
             default_width=1280,
@@ -365,4 +350,3 @@ class WanFLF2VModel:
             self.unload()
         except Exception:
             pass  # Avoid errors during cleanup
-
