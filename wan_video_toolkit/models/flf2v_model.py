@@ -283,14 +283,12 @@ class WanFLF2VModel:
                 self.config["model_id"],
                 subfolder="image_encoder",
                 torch_dtype=torch.float32,  # Always float32 for image encoder
-                cache_dir=self.cache_dir,
             )
 
             vae = AutoencoderKLWan.from_pretrained(
                 self.config["model_id"],
                 subfolder="vae",
                 torch_dtype=getattr(torch, self.config["dtype"]),
-                cache_dir=self.cache_dir,
             )
 
             # Create pipeline with device strategy
@@ -298,7 +296,6 @@ class WanFLF2VModel:
                 "image_encoder": image_encoder,
                 "vae": vae,
                 "torch_dtype": getattr(torch, self.config["dtype"]),
-                "cache_dir": self.cache_dir,
             }
 
             # Add device mapping if specified
